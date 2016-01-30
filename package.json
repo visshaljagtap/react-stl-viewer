@@ -14,7 +14,7 @@
     "url": "https://github.com/chiedolabs/stl-viewer.git"
   },
   "scripts": {
-    "build": "./node_modules/babel-cli/bin/babel.js STLViewer.js --out-dir dist/",
+    "build": "./node_modules/babel-cli/bin/babel.js -d dist src/",
     "prepublish": "npm run build"
   },
   "dependencies": {
