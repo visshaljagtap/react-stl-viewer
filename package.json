@@ -14,7 +14,7 @@
     "url": "https://github.com/chiedolabs/stl-viewer.git"
   },
   "scripts": {
-    "build": "./node_modules/babel-cli/bin/babel.js STLViewer.js dist/STLViewer.js",
+    "build": "./node_modules/babel-cli/bin/babel.js STLViewer.js --out-dir dist/",
     "prepublish": "npm run build"
   },
   "devDependencies": {
@@ -22,6 +22,10 @@
     "babel-core": "^6.3.17",
     "babel-preset-es2015": "^6.3.13",
     "babel-preset-stage-0": "^6.3.13",
+    "babel-plugin-add-module-exports": "^0.1.2",
+    "babel-plugin-react-transform": "^2.0.0-beta1",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
     "react": "^0.14.0",
     "three": "^0.72.0",
     "react-dom": "^0.14.0"
