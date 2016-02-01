@@ -26,6 +26,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var OrbitControls = require('three-orbit-controls')(_Three2.default);
+
 var STLViewer = function (_Component) {
   _inherits(STLViewer, _Component);
 
@@ -38,17 +40,22 @@ var STLViewer = function (_Component) {
   _createClass(STLViewer, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
+      var _this2 = this;
+
       var camera = undefined,
           scene = undefined,
           renderer = undefined,
           mesh = undefined,
-          distance = undefined;
+          distance = undefined,
+          controls = undefined;
       var _props = this.props;
       var url = _props.url;
       var width = _props.width;
       var height = _props.height;
       var modelColor = _props.modelColor;
       var backgroundColor = _props.backgroundColor;
+      var rotate = _props.rotate;
+      var orbitControls = _props.orbitControls;
 
       var xDims = undefined,
           yDims = undefined,
@@ -90,9 +97,10 @@ var STLViewer = function (_Component) {
           xDims = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
           yDims = geometry.boundingBox.max.y - geometry.boundingBox.min.y;
           zDims = geometry.boundingBox.max.z - geometry.boundingBox.min.z;
-
-          mesh.rotation.x = 5;
-          mesh.rotation.z = .25;
+          if (rotate) {
+            mesh.rotation.x = 5;
+            mesh.rotation.z = .25;
+          }
           scene.add(mesh);
 
           // Add the camera
@@ -104,6 +112,12 @@ var STLViewer = function (_Component) {
           renderer = new _Three2.default.WebGLRenderer(); //new THREE.CanvasRenderer();
           renderer.setSize(width, height);
           renderer.setClearColor(backgroundColor, 1);
+
+          // Add controls for mouse interaction
+          if (orbitControls) {
+            controls = new OrbitControls(camera, _reactDom2.default.findDOMNode(component));
+            controls.addEventListener('change', render);
+          }
 
           // Add to the React Component
           _reactDom2.default.findDOMNode(component).replaceChild(renderer.domElement, _reactDom2.default.findDOMNode(component).firstChild);
@@ -117,23 +131,28 @@ var STLViewer = function (_Component) {
        * Animate the scene
        * @returns {void}
        */
-      function animate() {
+      var animate = function animate() {
         // note: three.js includes requestAnimationFrame shim
-        requestAnimationFrame(animate);
+        if (_this2.props.rotate) {
+          requestAnimationFrame(animate);
+        }
+        if (_this2.props.orbitControls) {
+          controls.update();
+        }
         render();
-      }
+      };
 
       /**
        * Render the scene
        * @returns {void}
        */
-      function render() {
-        if (mesh) {
+      var render = function render() {
+        if (mesh && _this2.props.rotate) {
           mesh.rotation.z += 0.02;
         }
 
         renderer.render(scene, camera);
-      }
+      };
     }
   }, {
     key: 'render',
@@ -167,13 +186,17 @@ STLViewer.propTypes = {
   width: _react.PropTypes.number,
   height: _react.PropTypes.number,
   backgroundColor: _react.PropTypes.string,
-  modelColor: _react.PropTypes.string
+  modelColor: _react.PropTypes.string,
+  rotate: _react.PropTypes.bool,
+  orbitControls: _react.PropTypes.bool
 };
 STLViewer.defaultProps = {
   backgroundColor: '#EAEAEA',
   modelColor: '#B92C2C',
   height: 400,
-  width: 400
+  width: 400,
+  rotate: true,
+  orbitControls: true
 };
 ;
 

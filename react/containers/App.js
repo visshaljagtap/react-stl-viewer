@@ -7,7 +7,7 @@ class App extends Component{
     return (
       <div>
         <STLViewer url="http://localhost:4001/static/crazy-thing.stl" />
-        <STLViewer url="http://localhost:4001/static/bottle.stl" rotate={true} />
+        <STLViewer url="http://localhost:4001/static/bottle.stl" rotate={false} />
       </div>
     );
   }

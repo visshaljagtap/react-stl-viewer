@@ -13,6 +13,7 @@ class STLViewer extends Component {
     backgroundColor: PropTypes.string,
     modelColor: PropTypes.string,
     rotate: PropTypes.bool,
+    orbitControls: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -20,11 +21,13 @@ class STLViewer extends Component {
     modelColor: '#B92C2C',
     height: 400,
     width: 400,
+    rotate: true,
+    orbitControls: true,
   };
 
   componentDidMount() {
     let camera, scene, renderer, mesh, distance, controls;
-    let { url, width, height, modelColor, backgroundColor, rotate } = this.props;
+    let { url, width, height, modelColor, backgroundColor, rotate, orbitControls } = this.props;
     let xDims, yDims, zDims;
     let component = this;
 
@@ -81,9 +84,12 @@ class STLViewer extends Component {
         renderer = new THREE.WebGLRenderer(); //new THREE.CanvasRenderer();
         renderer.setSize( width, height );
         renderer.setClearColor(backgroundColor, 1);
-        // Add controls
-        controls = new OrbitControls(camera);
-        controls.addEventListener( 'change', render );
+
+        // Add controls for mouse interaction
+        if(orbitControls) {
+          controls = new OrbitControls(camera, ReactDOM.findDOMNode(component));
+          controls.addEventListener( 'change', render );
+        }
 
         // Add to the React Component
         ReactDOM.findDOMNode(component).replaceChild( renderer.domElement,
@@ -98,12 +104,16 @@ class STLViewer extends Component {
      * Animate the scene
      * @returns {void}
      */
-    function animate() {
+    let animate = () => {
       // note: three.js includes requestAnimationFrame shim
-      requestAnimationFrame( animate );
-      controls.update();
+      if(this.props.rotate) {
+        requestAnimationFrame( animate );
+      }
+      if(this.props.orbitControls) {
+        controls.update();
+      }
       render();
-    }
+    };
 
     /**
      * Render the scene

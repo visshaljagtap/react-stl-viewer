@@ -13,9 +13,10 @@ A component for viewing an STL object from a given URL.
 	
 	<STLViewer
     url='http://www.example.com/example-url.stl'
-    width={150}
-    height={150}
-    modelColor='#005B83'
+    width={400}
+    height={400}
+    modelColor='#B92C2C'
     backgroundColor='#EAEAEA'
     rotate={true}
+    orbitControls={true}
   />
