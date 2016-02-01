@@ -1,27 +1,35 @@
 import React, { PropTypes, Component } from 'react';
 import ReactDOM  from 'react-dom';
 import THREE from './Three';
+import Loader from 'halogen/ScaleLoader';
 
 class STLViewer extends Component {
   static propTypes = {
     className: PropTypes.string,
     url: PropTypes.string,
-    xDims: PropTypes.number,
-    yDims: PropTypes.number,
-    zDims: PropTypes.number,
     width: PropTypes.number,
     height: PropTypes.number,
-    backgroundColor: PropTypes.number,
-    modelColor: PropTypes.number,
+    backgroundColor: PropTypes.string,
+    modelColor: PropTypes.string,
+  };
+
+  static defaultProps = {
+    backgroundColor: '#EAEAEA',
+    modelColor: '#B92C2C',
+    height: 400,
+    width: 400,
   };
 
   componentDidMount() {
     let camera, scene, renderer, mesh, distance;
-    let { url, xDims, yDims, zDims, width, height, modelColor, backgroundColor } = this.props;
+    let { url, width, height, modelColor, backgroundColor } = this.props;
+    let xDims, yDims, zDims;
     let component = this;
 
+    let hexBackgroundColor = parseInt(backgroundColor.replace(/^#/, ''), 16);
+    let hexModelColor = parseInt(modelColor.replace(/^#/, ''), 16);
+
     init();
-    animate();
 
     /**
      * The init method for the 3D scene
@@ -51,24 +59,33 @@ class STLViewer extends Component {
             color: modelColor,
           }
         ));
+        // Set the object's dimensions
+        geometry.computeBoundingBox();
+        xDims = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
+        yDims = geometry.boundingBox.max.y - geometry.boundingBox.min.y;
+        zDims = geometry.boundingBox.max.z - geometry.boundingBox.min.z;
 
         mesh.rotation.x = 5;
         mesh.rotation.z = .25;
         scene.add( mesh );
+
+        // Add the camera
+        camera = new THREE.PerspectiveCamera( 30, width / height, 1, distance );
+        camera.position.set(0,0,Math.max(xDims*3,yDims*3,zDims*3));
+
+        scene.add( camera );
+
+        renderer = new THREE.WebGLRenderer(); //new THREE.CanvasRenderer();
+        renderer.setSize( width, height );
+        renderer.setClearColor(backgroundColor, 1);
+
+        // Add to the React Component
+        ReactDOM.findDOMNode(component).replaceChild( renderer.domElement,
+          ReactDOM.findDOMNode(component).firstChild);
+
+        // Start the animation
+        animate();
       });
-
-      // Add the camera
-      camera = new THREE.PerspectiveCamera( 30, width / height, 1, distance );
-      camera.position.set(0,0,Math.max(xDims*3,yDims*3,zDims*3));
-
-      scene.add( camera );
-
-      renderer = new THREE.WebGLRenderer(); //new THREE.CanvasRenderer();
-      renderer.setSize( width, height );
-      renderer.setClearColor(backgroundColor, 1);
-
-      // Add to the React Component
-      ReactDOM.findDOMNode(component).appendChild( renderer.domElement );
     }
 
     /**
@@ -95,8 +112,16 @@ class STLViewer extends Component {
   }
 
   render() {
+    const {width, height, modelColor} = this.props;
+
     return(
-      <div className={this.props.className}>
+      <div
+        className={this.props.className}
+        style={{ width: width, height: height }}
+      >
+        <div style={{textAlign: 'center', marginTop: height/2 - 8 }} >
+          <Loader color={modelColor} size="16px" />
+        </div>
       </div>
     );
   };

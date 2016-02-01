@@ -14,6 +14,10 @@ var _Three = require('./Three');
 
 var _Three2 = _interopRequireDefault(_Three);
 
+var _ScaleLoader = require('halogen/ScaleLoader');
+
+var _ScaleLoader2 = _interopRequireDefault(_ScaleLoader);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -41,18 +45,20 @@ var STLViewer = function (_Component) {
           distance = undefined;
       var _props = this.props;
       var url = _props.url;
-      var xDims = _props.xDims;
-      var yDims = _props.yDims;
-      var zDims = _props.zDims;
       var width = _props.width;
       var height = _props.height;
       var modelColor = _props.modelColor;
       var backgroundColor = _props.backgroundColor;
 
+      var xDims = undefined,
+          yDims = undefined,
+          zDims = undefined;
       var component = this;
 
+      var hexBackgroundColor = parseInt(backgroundColor.replace(/^#/, ''), 16);
+      var hexModelColor = parseInt(modelColor.replace(/^#/, ''), 16);
+
       init();
-      animate();
 
       /**
        * The init method for the 3D scene
@@ -79,24 +85,32 @@ var STLViewer = function (_Component) {
             overdraw: true,
             color: modelColor
           }));
+          // Set the object's dimensions
+          geometry.computeBoundingBox();
+          xDims = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
+          yDims = geometry.boundingBox.max.y - geometry.boundingBox.min.y;
+          zDims = geometry.boundingBox.max.z - geometry.boundingBox.min.z;
 
           mesh.rotation.x = 5;
           mesh.rotation.z = .25;
           scene.add(mesh);
+
+          // Add the camera
+          camera = new _Three2.default.PerspectiveCamera(30, width / height, 1, distance);
+          camera.position.set(0, 0, Math.max(xDims * 3, yDims * 3, zDims * 3));
+
+          scene.add(camera);
+
+          renderer = new _Three2.default.WebGLRenderer(); //new THREE.CanvasRenderer();
+          renderer.setSize(width, height);
+          renderer.setClearColor(backgroundColor, 1);
+
+          // Add to the React Component
+          _reactDom2.default.findDOMNode(component).replaceChild(renderer.domElement, _reactDom2.default.findDOMNode(component).firstChild);
+
+          // Start the animation
+          animate();
         });
-
-        // Add the camera
-        camera = new _Three2.default.PerspectiveCamera(30, width / height, 1, distance);
-        camera.position.set(0, 0, Math.max(xDims * 3, yDims * 3, zDims * 3));
-
-        scene.add(camera);
-
-        renderer = new _Three2.default.WebGLRenderer(); //new THREE.CanvasRenderer();
-        renderer.setSize(width, height);
-        renderer.setClearColor(backgroundColor, 1);
-
-        // Add to the React Component
-        _reactDom2.default.findDOMNode(component).appendChild(renderer.domElement);
       }
 
       /**
@@ -124,7 +138,23 @@ var STLViewer = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
-      return _react2.default.createElement('div', { className: this.props.className });
+      var _props2 = this.props;
+      var width = _props2.width;
+      var height = _props2.height;
+      var modelColor = _props2.modelColor;
+
+      return _react2.default.createElement(
+        'div',
+        {
+          className: this.props.className,
+          style: { width: width, height: height }
+        },
+        _react2.default.createElement(
+          'div',
+          { style: { textAlign: 'center', marginTop: height / 2 - 8 } },
+          _react2.default.createElement(_ScaleLoader2.default, { color: modelColor, size: '16px' })
+        )
+      );
     }
   }]);
 
@@ -134,13 +164,16 @@ var STLViewer = function (_Component) {
 STLViewer.propTypes = {
   className: _react.PropTypes.string,
   url: _react.PropTypes.string,
-  xDims: _react.PropTypes.number,
-  yDims: _react.PropTypes.number,
-  zDims: _react.PropTypes.number,
   width: _react.PropTypes.number,
   height: _react.PropTypes.number,
-  backgroundColor: _react.PropTypes.number,
-  modelColor: _react.PropTypes.number
+  backgroundColor: _react.PropTypes.string,
+  modelColor: _react.PropTypes.string
+};
+STLViewer.defaultProps = {
+  backgroundColor: '#EAEAEA',
+  modelColor: '#B92C2C',
+  height: 400,
+  width: 400
 };
 ;
 
