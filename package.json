@@ -1,6 +1,6 @@
 {
   "name": "stl-viewer",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A component for viewing an STL object from a given URL.",
   "main": "dist/STLViewer.js",
   "keywords": [
