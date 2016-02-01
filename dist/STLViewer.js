@@ -54,16 +54,13 @@ var STLViewer = function (_Component) {
       var height = _props.height;
       var modelColor = _props.modelColor;
       var backgroundColor = _props.backgroundColor;
-      var rotate = _props.rotate;
       var orbitControls = _props.orbitControls;
 
       var xDims = undefined,
           yDims = undefined,
           zDims = undefined;
       var component = this;
-
-      var hexBackgroundColor = parseInt(backgroundColor.replace(/^#/, ''), 16);
-      var hexModelColor = parseInt(modelColor.replace(/^#/, ''), 16);
+      var rotate = this.props.rotate;
 
       init();
 
@@ -116,7 +113,7 @@ var STLViewer = function (_Component) {
           // Add controls for mouse interaction
           if (orbitControls) {
             controls = new OrbitControls(camera, _reactDom2.default.findDOMNode(component));
-            controls.addEventListener('change', render);
+            controls.addEventListener('change', orbitRender);
           }
 
           // Add to the React Component
@@ -133,7 +130,7 @@ var STLViewer = function (_Component) {
        */
       var animate = function animate() {
         // note: three.js includes requestAnimationFrame shim
-        if (_this2.props.rotate) {
+        if (rotate) {
           requestAnimationFrame(animate);
         }
         if (_this2.props.orbitControls) {
@@ -143,11 +140,23 @@ var STLViewer = function (_Component) {
       };
 
       /**
+       * Render the scene after turning off the rotation
+       * @returns {void}
+       */
+      var orbitRender = function orbitRender() {
+        if (rotate) {
+          rotate = false;
+        }
+
+        render();
+      };
+
+      /**
        * Render the scene
        * @returns {void}
        */
       var render = function render() {
-        if (mesh && _this2.props.rotate) {
+        if (mesh && rotate) {
           mesh.rotation.z += 0.02;
         }
 

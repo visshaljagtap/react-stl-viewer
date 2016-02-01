@@ -2,7 +2,7 @@ import React, { PropTypes, Component } from 'react';
 import ReactDOM  from 'react-dom';
 import THREE from './Three';
 import Loader from 'halogen/ScaleLoader';
-var OrbitControls = require('three-orbit-controls')(THREE);
+let OrbitControls = require('three-orbit-controls')(THREE);
 
 class STLViewer extends Component {
   static propTypes = {
@@ -27,12 +27,10 @@ class STLViewer extends Component {
 
   componentDidMount() {
     let camera, scene, renderer, mesh, distance, controls;
-    let { url, width, height, modelColor, backgroundColor, rotate, orbitControls } = this.props;
+    const { url, width, height, modelColor, backgroundColor, orbitControls } = this.props;
     let xDims, yDims, zDims;
     let component = this;
-
-    let hexBackgroundColor = parseInt(backgroundColor.replace(/^#/, ''), 16);
-    let hexModelColor = parseInt(modelColor.replace(/^#/, ''), 16);
+    let rotate = this.props.rotate;
 
     init();
 
@@ -88,7 +86,7 @@ class STLViewer extends Component {
         // Add controls for mouse interaction
         if(orbitControls) {
           controls = new OrbitControls(camera, ReactDOM.findDOMNode(component));
-          controls.addEventListener( 'change', render );
+          controls.addEventListener( 'change', orbitRender );
         }
 
         // Add to the React Component
@@ -106,7 +104,7 @@ class STLViewer extends Component {
      */
     let animate = () => {
       // note: three.js includes requestAnimationFrame shim
-      if(this.props.rotate) {
+      if(rotate) {
         requestAnimationFrame( animate );
       }
       if(this.props.orbitControls) {
@@ -116,11 +114,24 @@ class STLViewer extends Component {
     };
 
     /**
+     * Render the scene after turning off the rotation
+     * @returns {void}
+     */
+    let orbitRender = () => {
+      if(rotate) {
+        rotate = false;
+      }
+
+      render();
+    };
+
+
+    /**
      * Render the scene
      * @returns {void}
      */
     let render = () => {
-      if (mesh && this.props.rotate) {
+      if (mesh && rotate) {
         mesh.rotation.z += 0.02;
       }
 
