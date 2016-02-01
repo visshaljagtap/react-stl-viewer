@@ -1,6 +1,6 @@
 {
   "name": "stl-viewer",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "description": "A component for viewing an STL object from a given URL.",
   "main": "dist/STLViewer.js",
   "keywords": [
@@ -47,9 +47,7 @@
     "imports-loader": "^0.6.5",
     "node-sass": "^3.4.2",
     "query-string": "^3.0.0",
-    "react": "^0.14.0",
     "react-addons-test-utils": "^0.14.0",
-    "react-dom": "^0.14.0",
     "react-transform-catch-errors": "^1.0.0",
     "react-transform-hmr": "^1.0.1",
     "redbox-react": "^1.0.1",
