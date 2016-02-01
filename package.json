@@ -20,7 +20,8 @@
   },
   "dependencies": {
     "halogen": "^0.1.10",
-    "three": "^0.72.0"
+    "three": "^0.72.0",
+    "three-orbit-controls": "^72.0.0"
   },
   "peerDependencies": {
     "react": ">=0.14.0",

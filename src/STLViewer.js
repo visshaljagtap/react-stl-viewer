@@ -2,6 +2,7 @@ import React, { PropTypes, Component } from 'react';
 import ReactDOM  from 'react-dom';
 import THREE from './Three';
 import Loader from 'halogen/ScaleLoader';
+var OrbitControls = require('three-orbit-controls')(THREE);
 
 class STLViewer extends Component {
   static propTypes = {
@@ -11,6 +12,7 @@ class STLViewer extends Component {
     height: PropTypes.number,
     backgroundColor: PropTypes.string,
     modelColor: PropTypes.string,
+    rotate: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -21,8 +23,8 @@ class STLViewer extends Component {
   };
 
   componentDidMount() {
-    let camera, scene, renderer, mesh, distance;
-    let { url, width, height, modelColor, backgroundColor } = this.props;
+    let camera, scene, renderer, mesh, distance, controls;
+    let { url, width, height, modelColor, backgroundColor, rotate } = this.props;
     let xDims, yDims, zDims;
     let component = this;
 
@@ -64,9 +66,10 @@ class STLViewer extends Component {
         xDims = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
         yDims = geometry.boundingBox.max.y - geometry.boundingBox.min.y;
         zDims = geometry.boundingBox.max.z - geometry.boundingBox.min.z;
-
-        mesh.rotation.x = 5;
-        mesh.rotation.z = .25;
+        if(rotate) {
+          mesh.rotation.x = 5;
+          mesh.rotation.z = .25;
+        }
         scene.add( mesh );
 
         // Add the camera
@@ -78,6 +81,9 @@ class STLViewer extends Component {
         renderer = new THREE.WebGLRenderer(); //new THREE.CanvasRenderer();
         renderer.setSize( width, height );
         renderer.setClearColor(backgroundColor, 1);
+        // Add controls
+        controls = new OrbitControls(camera);
+        controls.addEventListener( 'change', render );
 
         // Add to the React Component
         ReactDOM.findDOMNode(component).replaceChild( renderer.domElement,
@@ -95,6 +101,7 @@ class STLViewer extends Component {
     function animate() {
       // note: three.js includes requestAnimationFrame shim
       requestAnimationFrame( animate );
+      controls.update();
       render();
     }
 
@@ -102,13 +109,13 @@ class STLViewer extends Component {
      * Render the scene
      * @returns {void}
      */
-    function render() {
-      if (mesh) {
+    let render = () => {
+      if (mesh && this.props.rotate) {
         mesh.rotation.z += 0.02;
       }
 
       renderer.render( scene, camera );
-    }
+    };
   }
 
   render() {
