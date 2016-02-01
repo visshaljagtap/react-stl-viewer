@@ -1,6 +1,6 @@
 # STL Viewer
 
-A component for viewing an STL object from a given URL.
+A component for viewing an STL object from a given URL by utilizing Three.js
 
 *Note that you will still have to abide by the rules of CORS*
 

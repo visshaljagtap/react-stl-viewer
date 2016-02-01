@@ -1,11 +1,16 @@
 {
   "name": "stl-viewer",
   "version": "0.1.2",
-  "description": "A component for viewing an STL object from a given URL.",
+  "description": "A component for viewing an STL object from a given URL by utilizing Three.js",
   "main": "dist/STLViewer.js",
   "keywords": [
-    "Node",
-    "JavaScript"
+    "JavaScript",
+    "STL",
+    "STL viewer",
+    "Three",
+    "Three.js",
+    "React",
+    "3D"
   ],
   "author": "Chiedo",
   "license": "MIT",
