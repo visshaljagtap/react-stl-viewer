@@ -62,11 +62,6 @@ var STLViewer = function (_Component) {
         //Detector.addGetWebGLMessage();
         scene = new _Three2.default.Scene();
         distance = 10000;
-        camera = new _Three2.default.PerspectiveCamera(30, width / height, 1, distance);
-
-        camera.position.set(0, 0, Math.max(xDims * 3, yDims * 3, zDims * 3));
-
-        scene.add(camera);
         var directionalLight = new _Three2.default.DirectionalLight(0xffffff);
         directionalLight.position.x = 0;
         directionalLight.position.y = 0;
@@ -76,6 +71,10 @@ var STLViewer = function (_Component) {
 
         var loader = new _Three2.default.STLLoader();
         loader.load(url, function (geometry) {
+
+          // Center the object
+          geometry.center();
+
           mesh = new _Three2.default.Mesh(geometry, new _Three2.default.MeshLambertMaterial({
             overdraw: true,
             color: modelColor
@@ -83,9 +82,14 @@ var STLViewer = function (_Component) {
 
           mesh.rotation.x = 5;
           mesh.rotation.z = .25;
-          //mesh.scale.set( scale, scale, scale );
           scene.add(mesh);
         });
+
+        // Add the camera
+        camera = new _Three2.default.PerspectiveCamera(30, width / height, 1, distance);
+        camera.position.set(0, 0, Math.max(xDims * 3, yDims * 3, zDims * 3));
+
+        scene.add(camera);
 
         renderer = new _Three2.default.WebGLRenderer(); //new THREE.CanvasRenderer();
         renderer.setSize(width, height);

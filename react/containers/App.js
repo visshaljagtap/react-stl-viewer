@@ -14,14 +14,12 @@ class App extends Component{
       xDims:  parseInt(query.xDims, 10) || 53,
       yDims:  parseInt(query.yDims, 10) || 85,
       zDims:  parseInt(query.zDims, 10) || 27,
-      width:  parseInt(query.width, 10) || 400,
-      height: parseInt(query.height, 10) || 400,
     };
   }
 
   render(){
-    const { url, xDims, yDims, zDims, width, height } = this.state;
-
+    const { url, xDims, yDims, zDims } = this.state;
+    console.dir(this.state);
     return (
       <div>
         <STLViewer
@@ -29,12 +27,13 @@ class App extends Component{
           xDims={xDims}
           yDims={yDims}
           zDims={zDims}
-          width={width}
-          height={height}
+          width={400}
+          height={400}
           modelColor={0x005B83}
           backgroundColor={0xEAEAEA}
         />
-        <div>You can modify with following query strings: url, xDims, yDims, zDims, width, height.</div>
+        <div><a href="http://localhost:4001">Example A</a></div>
+        <div><a href="http://localhost:4001/?url=http://localhost:4001/static/crazy-thing.stl&width=400&height=400&xDims=146&yDims=106&zDims=78">Example B</a></div>
       </div>
     );
   }

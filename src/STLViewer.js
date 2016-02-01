@@ -31,11 +31,6 @@ class STLViewer extends Component {
       //Detector.addGetWebGLMessage();
       scene = new THREE.Scene();
       distance = 10000;
-      camera = new THREE.PerspectiveCamera( 30, width / height, 1, distance );
-
-      camera.position.set(0,0,Math.max(xDims*3,yDims*3,zDims*3));
-
-      scene.add( camera );
       let directionalLight = new THREE.DirectionalLight( 0xffffff );
       directionalLight.position.x = 0;
       directionalLight.position.y = 0;
@@ -45,6 +40,10 @@ class STLViewer extends Component {
 
       let loader = new THREE.STLLoader();
       loader.load(url, ( geometry ) => {
+
+        // Center the object
+        geometry.center();
+
         mesh = new THREE.Mesh(
           geometry,
           new THREE.MeshLambertMaterial({
@@ -55,9 +54,14 @@ class STLViewer extends Component {
 
         mesh.rotation.x = 5;
         mesh.rotation.z = .25;
-          //mesh.scale.set( scale, scale, scale );
         scene.add( mesh );
       });
+
+      // Add the camera
+      camera = new THREE.PerspectiveCamera( 30, width / height, 1, distance );
+      camera.position.set(0,0,Math.max(xDims*3,yDims*3,zDims*3));
+
+      scene.add( camera );
 
       renderer = new THREE.WebGLRenderer(); //new THREE.CanvasRenderer();
       renderer.setSize( width, height );
