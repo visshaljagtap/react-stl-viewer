@@ -19,7 +19,7 @@
     "url": "https://github.com/chiedolabs/react-stl-viewer.git"
   },
   "scripts": {
-    "build": "./node_modules/babel-cli/bin/babel.js -d dist src/",
+    "build": "NODE_ENV=production webpack -p --config webpack.config.prod.js",
     "start": "NODE_ENV=development node --harmony server.js",
     "prepublish": "npm run build"
   },
@@ -36,7 +36,7 @@
     "react": "^0.14.0",
     "react-dom": "^0.14.0",
     "babel-cli": "^6.3.17",
-    "babel-core": "^6.3.17",
+    "babel-core": "^6.3.15",
     "babel-eslint": "^5.0.0-beta4",
     "babel-loader": "^6.2.0",
     "babel-plugin-add-module-exports": "^0.1.2",

@@ -22,13 +22,10 @@ if(env === 'development') {
 }
 
 // Allows for the use of other static resources
-app.use('/static', express.static('dist/static'));
-
-app.set('view engine', 'ejs');
+app.use('/dist', express.static('dist'));
 
 app.get('*', (req, res) => {
-  res.render(path.join(__dirname, 'index.ejs'), {
-  });
+  res.sendFile(path.join(__dirname,'index.html'));
 });
 
 app.listen(PORT, (err) => {

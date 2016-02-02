@@ -11,7 +11,7 @@ module.exports = {
   output: {
     path: path.join(__dirname,'dist', 'static','js'),
     filename: 'react-bundle.js',
-    publicPath: '/static/js/',
+    publicPath: '/dist/static/js/',
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
