@@ -2,6 +2,8 @@
 
 A React component for viewing an STL object from a given URL by utilizing Three.js
 
+See a <a href="http://chiedolabs.github.io/react-stl-viewer/" target="_blank">live demo here.</a>
+
 *Note that you will still have to abide by the rules of CORS so you won't just be able to load a 3D file from someone else's site*
 
 # Installation
