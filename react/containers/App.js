@@ -6,8 +6,8 @@ class App extends Component{
   render(){
     return (
       <div>
-        <STLViewer url="/dist/static/crazy-thing.stl" />
-        <STLViewer url="/dist/static/bottle.stl" rotate={false} />
+        <STLViewer url="dist/static/crazy-thing.stl" />
+        <STLViewer url="dist/static/bottle.stl" rotate={false} />
       </div>
     );
   }
