@@ -80,6 +80,7 @@ var STLViewer = function (_Component) {
         scene.add(directionalLight);
 
         var loader = new _Three2.default.STLLoader();
+        loader.crossOrigin = '';
         loader.load(url, function (geometry) {
 
           // Calculate mesh noramls for MeshLambertMaterial.
