@@ -82,6 +82,10 @@ var STLViewer = function (_Component) {
         var loader = new _Three2.default.STLLoader();
         loader.load(url, function (geometry) {
 
+          // Calculate mesh noramls for MeshLambertMaterial.
+          geometry.computeFaceNormals();
+          geometry.computeVertexNormals();
+
           // Center the object
           geometry.center();
 
