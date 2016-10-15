@@ -50,6 +50,7 @@ class STLViewer extends Component {
       scene.add( directionalLight );
 
       let loader = new THREE.STLLoader();
+      loader.crossOrigin = '';
       loader.load(url, ( geometry ) => {
         
         // Calculate mesh noramls for MeshLambertMaterial.
