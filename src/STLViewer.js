@@ -51,6 +51,10 @@ class STLViewer extends Component {
 
       let loader = new THREE.STLLoader();
       loader.load(url, ( geometry ) => {
+        
+        // Calculate mesh noramls for MeshLambertMaterial.
+        geometry.computeFaceNormals();
+        geometry.computeVertexNormals();
 
         // Center the object
         geometry.center();
