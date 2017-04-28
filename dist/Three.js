@@ -108,14 +108,14 @@ THREE.STLLoader.prototype = {
 
 			if (reader.getUint32(index, false) == 0x434F4C4F /*COLO*/ && reader.getUint8(index + 4) == 0x52 /*'R'*/ && reader.getUint8(index + 5) == 0x3D /*'='*/) {
 
-					hasColors = true;
-					colors = new Float32Array(faces * 3 * 3);
+				hasColors = true;
+				colors = new Float32Array(faces * 3 * 3);
 
-					defaultR = reader.getUint8(index + 6) / 255;
-					defaultG = reader.getUint8(index + 7) / 255;
-					defaultB = reader.getUint8(index + 8) / 255;
-					alpha = reader.getUint8(index + 9) / 255;
-				}
+				defaultR = reader.getUint8(index + 6) / 255;
+				defaultG = reader.getUint8(index + 7) / 255;
+				defaultB = reader.getUint8(index + 8) / 255;
+				alpha = reader.getUint8(index + 9) / 255;
+			}
 		}
 
 		var dataOffset = 84;
@@ -336,7 +336,7 @@ if (typeof DataView === 'undefined') {
 			var b = this._getBytes(8, byteOffset, littleEndian),
 			    sign = 1 - 2 * (b[7] >> 7),
 			    exponent = ((b[7] << 1 & 0xff) << 3 | b[6] >> 4) - ((1 << 10) - 1),
-			   
+
 
 			// Binary operators such as | and << operate on 32 bit values, using + and Math.pow(2) instead
 			mantissa = (b[6] & 0x0f) * Math.pow(2, 48) + b[5] * Math.pow(2, 40) + b[4] * Math.pow(2, 32) + b[3] * Math.pow(2, 24) + b[2] * Math.pow(2, 16) + b[1] * Math.pow(2, 8) + b[0];
