@@ -21,7 +21,7 @@
   "scripts": {
     "build": "./node_modules/babel-cli/bin/babel.js -d dist src/ && NODE_ENV=production webpack -p --config webpack.config.prod.js",
     "start": "NODE_ENV=development node --harmony server.js",
-    "prepublish": "npm run build"
+    "prepublish": "yarn run build"
   },
   "dependencies": {
     "halogen": "^0.1.10",
