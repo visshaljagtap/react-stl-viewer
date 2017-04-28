@@ -26,3 +26,9 @@ See a <a href="http://chiedolabs.github.io/react-stl-viewer/" target="_blank">li
 ## Contributing
 
 - If you test the building of the dist, please do not commit those files.
+
+## Testing
+
+- Build with `yarn run build`
+- Run this in the root of the project folder `python -m SimpleHTTPServer 8000`
+- Visit `http://0.0.0.0:8000` in your browser
