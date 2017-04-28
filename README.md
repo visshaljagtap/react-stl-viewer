@@ -22,3 +22,7 @@ See a <a href="http://chiedolabs.github.io/react-stl-viewer/" target="_blank">li
     	rotate={true}
     	orbitControls={true}
   	/>
+
+## Contributing
+
+- If you test the building of the dist, please do not commit those files.
