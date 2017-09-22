@@ -277,9 +277,18 @@ class STLViewer extends Component {
 		return(
 			<div
 				className={this.props.className}
-				style={{ width: width, height: height }}
+				style={{
+					width: width,
+					height: height,
+					overflow: 'hidden',
+				}}
 			>
-				<div style={{textAlign: 'center', marginTop: height/2 - 8 }} >
+				<div style={{
+					height: '100%',
+					display: 'flex',
+					justifyContent: 'center',
+					alignItems: 'center',
+				}} >
 					<Loader color={modelColor} size="16px" />
 				</div>
 			</div>
