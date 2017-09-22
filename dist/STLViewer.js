@@ -318,11 +318,20 @@ var STLViewer = function (_Component) {
 				'div',
 				{
 					className: this.props.className,
-					style: { width: width, height: height }
+					style: {
+						width: width,
+						height: height,
+						overflow: 'hidden'
+					}
 				},
 				_react2.default.createElement(
 					'div',
-					{ style: { textAlign: 'center', marginTop: height / 2 - 8 } },
+					{ style: {
+							height: '100%',
+							display: 'flex',
+							justifyContent: 'center',
+							alignItems: 'center'
+						} },
 					_react2.default.createElement(_ScaleLoader2.default, { color: modelColor, size: '16px' })
 				)
 			);
