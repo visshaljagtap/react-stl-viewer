@@ -34,11 +34,16 @@ class Paint {
     directionalLight.position.y = 0;
     directionalLight.position.z = 1;
     directionalLight.position.normalize();
-    this.scene.add( directionalLight );
+    this.scene.add(directionalLight);
 
+    this.addSTLToScene();
+  }
+
+  addSTLToScene() {
     let loader = new THREE.STLLoader();
     loader.crossOrigin = '';
-    loader.load(this.url, ( geometry ) => {
+
+    loader.load(this.url, (geometry) => {
 
       // Calculate mesh noramls for MeshLambertMaterial.
       geometry.computeFaceNormals();
@@ -67,30 +72,40 @@ class Paint {
 
       this.scene.add(this.mesh);
 
-      // Add the camera
-      this.camera = new THREE.PerspectiveCamera(30, this.width / this.height, 1, this.distance);
-      this.camera.position.set(0,0,Math.max(this.xDims * 3, this.yDims * 3, this.zDims * 3));
-
-      this.scene.add(this.camera);
-
-      this.renderer = new THREE.WebGLRenderer(); //new THREE.CanvasRenderer();
-      this.renderer.setSize(this.width, this.height);
-      this.renderer.setClearColor(this.backgroundColor, 1);
-
-      // Add controls for mouse interaction
-      if(this.orbitControls) {
-        this.controls = new OrbitControls(this.camera, ReactDOM.findDOMNode(this.component));
-        this.controls.enableKeys = false
-        this.controls.addEventListener( 'change', this.orbitRender );
-      }
-
-      // Add to the React Component
-      ReactDOM.findDOMNode(this.component).replaceChild( this.renderer.domElement,
-        ReactDOM.findDOMNode(this.component).firstChild);
+      this.addCamera();
+      this.addInteractionControls();
+      this.addToReactComponent();
 
       // Start the animation
       this.animate();
     });
+  }
+
+  addCamera() {
+    // Add the camera
+    this.camera = new THREE.PerspectiveCamera(30, this.width / this.height, 1, this.distance);
+    this.camera.position.set(0,0,Math.max(this.xDims * 3, this.yDims * 3, this.zDims * 3));
+
+    this.scene.add(this.camera);
+
+    this.renderer = new THREE.WebGLRenderer(); //new THREE.CanvasRenderer();
+    this.renderer.setSize(this.width, this.height);
+    this.renderer.setClearColor(this.backgroundColor, 1);
+  }
+
+  addInteractionControls() {
+    // Add controls for mouse interaction
+    if(this.orbitControls) {
+      this.controls = new OrbitControls(this.camera, ReactDOM.findDOMNode(this.component));
+      this.controls.enableKeys = false
+      this.controls.addEventListener( 'change', this.orbitRender.bind(this) );
+    }
+  }
+
+  addToReactComponent() {
+    // Add to the React Component
+    ReactDOM.findDOMNode(this.component).replaceChild( this.renderer.domElement,
+      ReactDOM.findDOMNode(this.component).firstChild);
   }
 
   /**
@@ -132,110 +147,5 @@ class Paint {
     this.renderer.render(this.scene, this.camera);
   }
 }
-/*
-let camera, scene, renderer, mesh, distance, controls;
-let xDims, yDims, zDims;
-
-const Paint = (params) => {
-  //Detector.addGetWebGLMessage();
-  scene = new THREE.Scene();
-  distance = 10000;
-  let directionalLight = new THREE.DirectionalLight( 0xffffff );
-  directionalLight.position.x = 0;
-  directionalLight.position.y = 0;
-  directionalLight.position.z = 1;
-  directionalLight.position.normalize();
-  scene.add(directionalLight);
-
-  let loader = new THREE.STLLoader();
-  loader.crossOrigin = '';
-  loader.load(params.url, (geometry) => {
-
-    // Calculate mesh noramls for MeshLambertMaterial.
-    geometry.computeFaceNormals();
-    geometry.computeVertexNormals();
-
-    // Center the object
-    geometry.center();
-
-    mesh = new THREE.Mesh(
-      geometry,
-      new THREE.MeshLambertMaterial({
-        overdraw: true,
-        color: params.modelColor,
-      })
-    );
-
-    // Set the object's dimensions
-    geometry.computeBoundingBox();
-    xDims = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
-    yDims = geometry.boundingBox.max.y - geometry.boundingBox.min.y;
-    zDims = geometry.boundingBox.max.z - geometry.boundingBox.min.z;
-
-    if(params.rotate) {
-      mesh.rotation.x = 5;
-      mesh.rotation.z = .25;
-    }
-
-    scene.add(mesh);
-
-    // Add the camera
-    camera = new THREE.PerspectiveCamera(30, params.width / params.height, 1, distance);
-    camera.position.set(0, 0, Math.max(xDims * 3, yDims * 3, zDims * 3));
-
-    scene.add(camera);
-
-    renderer = new THREE.WebGLRenderer(); //new THREE.CanvasRenderer();
-    renderer.setSize(params.width, params.height);
-    renderer.setClearColor(params.backgroundColor, 1);
-
-    // Add controls for mouse interaction
-    if(params.orbitControls) {
-      controls = new OrbitControls(camera, ReactDOM.findDOMNode(params.component));
-      controls.enableKeys = false
-      controls.addEventListener('change', orbitRender(params));
-    }
-
-    // Add to the React Component
-    ReactDOM.findDOMNode(params.component).replaceChild( renderer.domElement,
-      ReactDOM.findDOMNode(params.component).firstChild);
-
-    // Start the animation
-    animate(params);
-  });
-};
-
-let orbitRender = (params) => {
-  if(params.rotate) {
-    params.rotate = false;
-  }
-
-  render(params);
-};
-
-let animate = (params) => {
-  // note: three.js includes requestAnimationFrame shim
-  debugger;
-  if(params.rotate) {
-    requestAnimationFrame(animate(params));
-  }
-
-  if(params.orbitControls) {
-    controls.update();
-  }
-
-  render(params);
-};
-
-
-let render = (params) => {
-  if (mesh && params.rotate) {
-    mesh.rotation.z += 0.02;
-  }
-
-  renderer.render(scene, camera);
-};
-*/
-
 
 export default Paint;
