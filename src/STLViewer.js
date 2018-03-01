@@ -1,9 +1,6 @@
 import React, { PropTypes, Component } from 'react';
-import ReactDOM  from 'react-dom';
-import THREE from './Three';
 import Loader from 'halogen/ScaleLoader';
 import Paint from './Paint';
-let OrbitControls = require('three-orbit-controls')(THREE);
 
 class STLViewer extends Component {
 	static propTypes = {
