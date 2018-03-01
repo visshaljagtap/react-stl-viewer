@@ -2,6 +2,7 @@ import React, { PropTypes, Component } from 'react';
 import ReactDOM  from 'react-dom';
 import THREE from './Three';
 import Loader from 'halogen/ScaleLoader';
+import Paint from './Paint';
 let OrbitControls = require('three-orbit-controls')(THREE);
 
 class STLViewer extends Component {
@@ -31,6 +32,7 @@ class STLViewer extends Component {
 		let xDims, yDims, zDims;
 		let component = this;
 		let rotate = this.props.rotate;
+    let paint = new Paint(this)
 
 		init();
 
@@ -39,69 +41,7 @@ class STLViewer extends Component {
 		 * @returns {void}
 		 */
 		function init() {
-			//Detector.addGetWebGLMessage();
-			scene = new THREE.Scene();
-			distance = 10000;
-			let directionalLight = new THREE.DirectionalLight( 0xffffff );
-			directionalLight.position.x = 0;
-			directionalLight.position.y = 0;
-			directionalLight.position.z = 1;
-			directionalLight.position.normalize();
-			scene.add( directionalLight );
-
-			let loader = new THREE.STLLoader();
-			loader.crossOrigin = '';
-			loader.load(url, ( geometry ) => {
-				
-				// Calculate mesh noramls for MeshLambertMaterial.
-				geometry.computeFaceNormals();
-				geometry.computeVertexNormals();
-
-				// Center the object
-				geometry.center();
-
-				mesh = new THREE.Mesh(
-					geometry,
-					new THREE.MeshLambertMaterial({
-						overdraw:true,
-						color: modelColor,
-					}
-				));
-				// Set the object's dimensions
-				geometry.computeBoundingBox();
-				xDims = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
-				yDims = geometry.boundingBox.max.y - geometry.boundingBox.min.y;
-				zDims = geometry.boundingBox.max.z - geometry.boundingBox.min.z;
-				if(rotate) {
-					mesh.rotation.x = 5;
-					mesh.rotation.z = .25;
-				}
-				scene.add( mesh );
-
-				// Add the camera
-				camera = new THREE.PerspectiveCamera( 30, width / height, 1, distance );
-				camera.position.set(0,0,Math.max(xDims*3,yDims*3,zDims*3));
-
-				scene.add( camera );
-
-				renderer = new THREE.WebGLRenderer(); //new THREE.CanvasRenderer();
-				renderer.setSize( width, height );
-				renderer.setClearColor(backgroundColor, 1);
-
-				// Add controls for mouse interaction
-				if(orbitControls) {
-					controls = new OrbitControls(camera, ReactDOM.findDOMNode(component));
-					controls.enableKeys = false
-					controls.addEventListener( 'change', orbitRender );
-				}
-
-				// Add to the React Component
-				ReactDOM.findDOMNode(component).replaceChild( renderer.domElement,
-					ReactDOM.findDOMNode(component).firstChild);
-
-				// Start the animation
-				animate();
-			});
+      paint.init();
 		}
 
 		/**
@@ -159,6 +99,9 @@ class STLViewer extends Component {
 		let component = this;
 		let rotate = nextProps.rotate;
 
+    this.props = nextProps;
+    let paint = new Paint(this)
+
 		init();
 
 		/**
@@ -166,68 +109,7 @@ class STLViewer extends Component {
 		 * @returns {void}
 		 */
 		function init() {
-			//Detector.addGetWebGLMessage();
-			scene = new THREE.Scene();
-			distance = 10000;
-			let directionalLight = new THREE.DirectionalLight( 0xffffff );
-			directionalLight.position.x = 0;
-			directionalLight.position.y = 0;
-			directionalLight.position.z = 1;
-			directionalLight.position.normalize();
-			scene.add( directionalLight );
-
-			let loader = new THREE.STLLoader();
-			loader.crossOrigin = '';
-			loader.load(url, ( geometry ) => {
-				
-				// Calculate mesh noramls for MeshLambertMaterial.
-				geometry.computeFaceNormals();
-				geometry.computeVertexNormals();
-
-				// Center the object
-				geometry.center();
-
-				mesh = new THREE.Mesh(
-					geometry,
-					new THREE.MeshLambertMaterial({
-						overdraw:true,
-						color: modelColor,
-					}
-				));
-				// Set the object's dimensions
-				geometry.computeBoundingBox();
-				xDims = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
-				yDims = geometry.boundingBox.max.y - geometry.boundingBox.min.y;
-				zDims = geometry.boundingBox.max.z - geometry.boundingBox.min.z;
-				if(rotate) {
-					mesh.rotation.x = 5;
-					mesh.rotation.z = .25;
-				}
-				scene.add( mesh );
-
-				// Add the camera
-				camera = new THREE.PerspectiveCamera( 30, width / height, 1, distance );
-				camera.position.set(0,0,Math.max(xDims*3,yDims*3,zDims*3));
-
-				scene.add( camera );
-
-				renderer = new THREE.WebGLRenderer(); //new THREE.CanvasRenderer();
-				renderer.setSize( width, height );
-				renderer.setClearColor(backgroundColor, 1);
-
-				// Add controls for mouse interaction
-				if(orbitControls) {
-					controls = new OrbitControls(camera, ReactDOM.findDOMNode(component));
-					controls.addEventListener( 'change', orbitRender );
-				}
-
-				// Add to the React Component
-				ReactDOM.findDOMNode(component).replaceChild( renderer.domElement,
-					ReactDOM.findDOMNode(component).firstChild);
-
-				// Start the animation
-				animate();
-			});
+      paint.init();
 		}
 
 		/**
