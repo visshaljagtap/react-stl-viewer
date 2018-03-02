@@ -28,7 +28,7 @@ class Paint {
     //Detector.addGetWebGLMessage();
     this.scene = new THREE.Scene();
     this.distance = 10000;
-    let directionalLight = new THREE.DirectionalLight( 0xffffff );
+    let directionalLight = new THREE.DirectionalLight(0xffffff);
     directionalLight.position.x = 0;
     directionalLight.position.y = 0;
     directionalLight.position.z = 1;
@@ -64,7 +64,7 @@ class Paint {
       this.yDims = geometry.boundingBox.max.y - geometry.boundingBox.min.y;
       this.zDims = geometry.boundingBox.max.z - geometry.boundingBox.min.z;
 
-      if(this.rotate) {
+      if (this.rotate) {
         this.mesh.rotation.x = 5;
         this.mesh.rotation.z = .25;
       }
@@ -83,7 +83,7 @@ class Paint {
   addCamera() {
     // Add the camera
     this.camera = new THREE.PerspectiveCamera(30, this.width / this.height, 1, this.distance);
-    this.camera.position.set(0,0,Math.max(this.xDims * 3, this.yDims * 3, this.zDims * 3));
+    this.camera.position.set(0, 0, Math.max(this.xDims * 3, this.yDims * 3, this.zDims * 3));
 
     this.scene.add(this.camera);
 
@@ -94,16 +94,16 @@ class Paint {
 
   addInteractionControls() {
     // Add controls for mouse interaction
-    if(this.orbitControls) {
+    if (this.orbitControls) {
       this.controls = new OrbitControls(this.camera, ReactDOM.findDOMNode(this.component));
       this.controls.enableKeys = false
-      this.controls.addEventListener( 'change', this.orbitRender.bind(this) );
+      this.controls.addEventListener('change', this.orbitRender.bind(this));
     }
   }
 
   addToReactComponent() {
     // Add to the React Component
-    ReactDOM.findDOMNode(this.component).replaceChild( this.renderer.domElement,
+    ReactDOM.findDOMNode(this.component).replaceChild(this.renderer.domElement,
       ReactDOM.findDOMNode(this.component).firstChild);
   }
 
@@ -113,10 +113,10 @@ class Paint {
    */
   animate() {
     // note: three.js includes requestAnimationFrame shim
-    if(this.rotate) {
+    if (this.rotate) {
       requestAnimationFrame(this.animate.bind(this));
     }
-    if(this.orbitControls) {
+    if (this.orbitControls) {
       this.controls.update();
     }
     this.render();
@@ -127,7 +127,7 @@ class Paint {
    * @returns {void}
    */
   orbitRender() {
-    if(this.rotate) {
+    if (this.rotate) {
       this.rotate = false;
     }
 
