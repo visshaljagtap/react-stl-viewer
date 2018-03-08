@@ -1,5 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import Loader from 'halogen/ScaleLoader';
+import { ScaleLoader } from 'halogenium';
 import Paint from './Paint';
 
 class STLViewer extends Component {
@@ -166,7 +166,7 @@ class STLViewer extends Component {
           justifyContent: 'center',
           alignItems: 'center',
           }} >
-          <Loader color={modelColor} size="16px" />
+          <ScaleLoader color={modelColor} size="16px" />
         </div>
       </div>
       );
