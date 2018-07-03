@@ -87,7 +87,9 @@ class Paint {
 
     this.scene.add(this.camera);
 
-    this.renderer = new THREE.WebGLRenderer(); //new THREE.CanvasRenderer();
+    this.renderer = new THREE.WebGLRenderer({
+      antialias: true,
+    }); //new THREE.CanvasRenderer();
     this.renderer.setSize(this.width, this.height);
     this.renderer.setClearColor(this.backgroundColor, 1);
   }
