@@ -12,7 +12,14 @@ class STLViewer extends Component {
     backgroundColor: PropTypes.string,
     modelColor: PropTypes.string,
     rotate: PropTypes.bool,
-    orbitControls: PropTypes.bool
+    orbitControls: PropTypes.bool,
+    cameraX: PropTypes.number,
+    cameraY: PropTypes.number,
+    cameraZ: PropTypes.number,
+    lightX: PropTypes.number,
+    lightY: PropTypes.number,
+    lightZ: PropTypes.number,
+    rotationSpeeds: PropTypes.arrayOf(PropTypes.number),
   };
 
   static defaultProps = {
@@ -21,16 +28,20 @@ class STLViewer extends Component {
     height: 400,
     width: 400,
     rotate: true,
-    orbitControls: true
+    orbitControls: true,
+    cameraX: 0,
+    cameraY: 0,
+    cameraZ: null,
+    lightX: 0,
+    lightY: 0,
+    lightZ: 1,
+    rotationSpeeds: [0, 0, 0.02],
   };
 
   componentDidMount() {
-    let camera, scene, renderer, mesh, distance, controls;
-    const { url, width, height, modelColor, backgroundColor, orbitControls } = this.props;
-    let xDims, yDims, zDims;
-    let component = this;
+    let camera, scene, renderer, mesh, controls;
     let rotate = this.props.rotate;
-    let paint = new Paint(this)
+    let paint = new Paint(this);
 
     init();
 
@@ -58,24 +69,14 @@ class STLViewer extends Component {
     };
 
     /**
-     * Render the scene after turning off the rotation
-     * @returns {void}
-     */
-    let orbitRender = () => {
-      if (rotate) {
-        rotate = false;
-      }
-
-      render();
-    };
-
-    /**
      * Render the scene
      * @returns {void}
      */
     let render = () => {
       if (mesh && rotate) {
-        mesh.rotation.z += 0.02;
+        mesh.rotation.x += this.rotationSpeeds[0];
+        mesh.rotation.y += this.rotationSpeeds[1];
+        mesh.rotation.z += this.rotationSpeeds[2];
       }
 
       renderer.render(scene, camera);
@@ -83,21 +84,15 @@ class STLViewer extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (JSON.stringify(nextProps) === JSON.stringify(this.props)) {
-      return false
-    }
-    return true
+    return JSON.stringify(nextProps) !== JSON.stringify(this.props);
   }
 
   componentWillUpdate(nextProps, nextState) {
-    let camera, scene, renderer, mesh, distance, controls;
-    const { url, width, height, modelColor, backgroundColor, orbitControls } = nextProps;
-    let xDims, yDims, zDims;
-    let component = this;
-    let rotate = nextProps.rotate;
+    let camera, scene, renderer, mesh, controls;
+    let { rotate, rotationSpeeds } = nextProps;
 
     this.props = nextProps;
-    let paint = new Paint(this)
+    let paint = new Paint(this);
 
     init();
 
@@ -125,24 +120,14 @@ class STLViewer extends Component {
     };
 
     /**
-     * Render the scene after turning off the rotation
-     * @returns {void}
-     */
-    let orbitRender = () => {
-      if (rotate) {
-        rotate = false;
-      }
-
-      render();
-    };
-
-    /**
      * Render the scene
      * @returns {void}
      */
     let render = () => {
       if (mesh && rotate) {
-        mesh.rotation.z += 0.02;
+        mesh.rotation.x += rotationSpeeds[0];
+        mesh.rotation.y += rotationSpeeds[1];
+        mesh.rotation.z += rotationSpeeds[2];
       }
 
       renderer.render(scene, camera);
@@ -156,9 +141,9 @@ class STLViewer extends Component {
       <div
         className={this.props.className}
         style={{
-        width: width,
-        height: height,
-        overflow: 'hidden',
+          width: width,
+          height: height,
+          overflow: 'hidden',
         }}
       >
         <div style={{
@@ -166,12 +151,12 @@ class STLViewer extends Component {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          }} >
+        }} >
           <ScaleLoader color={modelColor} size="16px" />
         </div>
       </div>
-      );
-};
-};
+    );
+  };
+}
 
 module.exports = STLViewer;
