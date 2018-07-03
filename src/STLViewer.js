@@ -19,6 +19,7 @@ class STLViewer extends Component {
     lightX: PropTypes.number,
     lightY: PropTypes.number,
     lightZ: PropTypes.number,
+    lightColor: PropTypes.string,
     rotationSpeeds: PropTypes.arrayOf(PropTypes.number),
   };
 
@@ -35,6 +36,7 @@ class STLViewer extends Component {
     lightX: 0,
     lightY: 0,
     lightZ: 1,
+    lightColor: '#ffffff',
     rotationSpeeds: [0, 0, 0.02],
   };
 
