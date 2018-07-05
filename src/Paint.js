@@ -12,26 +12,24 @@ class Paint {
     this.backgroundColor = context.props.backgroundColor;
     this.orbitControls = context.props.orbitControls;
     this.rotate = context.props.rotate;
-
-    this.camera;
-    this.scene;
-    this.renderer;
-    this.mesh;
-    this.distance;
-    this.controls;
-    this.xDims;
-    this.yDims;
-    this.zDims;
+    this.cameraX = context.props.cameraX;
+    this.cameraY = context.props.cameraY;
+    this.cameraZ = context.props.cameraZ;
+    this.rotationSpeeds = context.props.rotationSpeeds;
+    this.lightX = context.props.lightX;
+    this.lightY = context.props.lightY;
+    this.lightZ = context.props.lightZ;
+    this.lightColor = context.props.lightColor;
   }
 
   init() {
     //Detector.addGetWebGLMessage();
     this.scene = new THREE.Scene();
     this.distance = 10000;
-    let directionalLight = new THREE.DirectionalLight(0xffffff);
-    directionalLight.position.x = 0;
-    directionalLight.position.y = 0;
-    directionalLight.position.z = 1;
+    let directionalLight = new THREE.DirectionalLight(this.lightColor);
+    directionalLight.position.x = this.lightX;
+    directionalLight.position.y = this.lightY;
+    directionalLight.position.z = this.lightZ;
     directionalLight.position.normalize();
     this.scene.add(directionalLight);
 
@@ -54,9 +52,9 @@ class Paint {
       this.mesh = new THREE.Mesh(
         geometry,
         new THREE.MeshLambertMaterial({
-          overdraw:true,
-          color: this.modelColor,
-        }
+            overdraw:true,
+            color: this.modelColor,
+          }
         ));
       // Set the object's dimensions
       geometry.computeBoundingBox();
@@ -65,8 +63,9 @@ class Paint {
       this.zDims = geometry.boundingBox.max.z - geometry.boundingBox.min.z;
 
       if (this.rotate) {
-        this.mesh.rotation.x = 5;
-        this.mesh.rotation.z = .25;
+        this.mesh.rotation.x = this.rotationSpeeds[0];
+        this.mesh.rotation.y = this.rotationSpeeds[1];
+        this.mesh.rotation.z = this.rotationSpeeds[2];
       }
 
       this.scene.add(this.mesh);
@@ -83,9 +82,16 @@ class Paint {
   addCamera() {
     // Add the camera
     this.camera = new THREE.PerspectiveCamera(30, this.width / this.height, 1, this.distance);
-    this.camera.position.set(0, 0, Math.max(this.xDims * 3, this.yDims * 3, this.zDims * 3));
+
+    if (this.cameraZ === null) {
+      this.cameraZ = Math.max(this.xDims * 3, this.yDims * 3, this.zDims * 3);
+    }
+
+    this.camera.position.set(this.cameraX, this.cameraY, this.cameraZ);
 
     this.scene.add(this.camera);
+
+    this.camera.lookAt(this.mesh);
 
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -98,7 +104,7 @@ class Paint {
     // Add controls for mouse interaction
     if (this.orbitControls) {
       this.controls = new OrbitControls(this.camera, ReactDOM.findDOMNode(this.component));
-      this.controls.enableKeys = false
+      this.controls.enableKeys = false;
       this.controls.addEventListener('change', this.orbitRender.bind(this));
     }
   }
@@ -142,7 +148,9 @@ class Paint {
    */
   render() {
     if (this.mesh && this.rotate) {
-      this.mesh.rotation.z += 0.02;
+      this.mesh.rotation.x += this.rotationSpeeds[0];
+      this.mesh.rotation.y += this.rotationSpeeds[1];
+      this.mesh.rotation.z += this.rotationSpeeds[2];
     }
 
     this.renderer.render(this.scene, this.camera);
