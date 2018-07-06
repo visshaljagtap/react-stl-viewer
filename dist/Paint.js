@@ -32,16 +32,14 @@ var Paint = function () {
     this.backgroundColor = context.props.backgroundColor;
     this.orbitControls = context.props.orbitControls;
     this.rotate = context.props.rotate;
-
-    this.camera;
-    this.scene;
-    this.renderer;
-    this.mesh;
-    this.distance;
-    this.controls;
-    this.xDims;
-    this.yDims;
-    this.zDims;
+    this.cameraX = context.props.cameraX;
+    this.cameraY = context.props.cameraY;
+    this.cameraZ = context.props.cameraZ;
+    this.rotationSpeeds = context.props.rotationSpeeds;
+    this.lightX = context.props.lightX;
+    this.lightY = context.props.lightY;
+    this.lightZ = context.props.lightZ;
+    this.lightColor = context.props.lightColor;
   }
 
   _createClass(Paint, [{
@@ -50,10 +48,10 @@ var Paint = function () {
       //Detector.addGetWebGLMessage();
       this.scene = new _Three2.default.Scene();
       this.distance = 10000;
-      var directionalLight = new _Three2.default.DirectionalLight(0xffffff);
-      directionalLight.position.x = 0;
-      directionalLight.position.y = 0;
-      directionalLight.position.z = 1;
+      var directionalLight = new _Three2.default.DirectionalLight(this.lightColor);
+      directionalLight.position.x = this.lightX;
+      directionalLight.position.y = this.lightY;
+      directionalLight.position.z = this.lightZ;
       directionalLight.position.normalize();
       this.scene.add(directionalLight);
 
@@ -87,8 +85,9 @@ var Paint = function () {
         _this.zDims = geometry.boundingBox.max.z - geometry.boundingBox.min.z;
 
         if (_this.rotate) {
-          _this.mesh.rotation.x = 5;
-          _this.mesh.rotation.z = .25;
+          _this.mesh.rotation.x = _this.rotationSpeeds[0];
+          _this.mesh.rotation.y = _this.rotationSpeeds[1];
+          _this.mesh.rotation.z = _this.rotationSpeeds[2];
         }
 
         _this.scene.add(_this.mesh);
@@ -106,11 +105,20 @@ var Paint = function () {
     value: function addCamera() {
       // Add the camera
       this.camera = new _Three2.default.PerspectiveCamera(30, this.width / this.height, 1, this.distance);
-      this.camera.position.set(0, 0, Math.max(this.xDims * 3, this.yDims * 3, this.zDims * 3));
+
+      if (this.cameraZ === null) {
+        this.cameraZ = Math.max(this.xDims * 3, this.yDims * 3, this.zDims * 3);
+      }
+
+      this.camera.position.set(this.cameraX, this.cameraY, this.cameraZ);
 
       this.scene.add(this.camera);
 
-      this.renderer = new _Three2.default.WebGLRenderer(); //new THREE.CanvasRenderer();
+      this.camera.lookAt(this.mesh);
+
+      this.renderer = new _Three2.default.WebGLRenderer({
+        antialias: true
+      }); //new THREE.CanvasRenderer();
       this.renderer.setSize(this.width, this.height);
       this.renderer.setClearColor(this.backgroundColor, 1);
     }
@@ -173,7 +181,9 @@ var Paint = function () {
     key: 'render',
     value: function render() {
       if (this.mesh && this.rotate) {
-        this.mesh.rotation.z += 0.02;
+        this.mesh.rotation.x += this.rotationSpeeds[0];
+        this.mesh.rotation.y += this.rotationSpeeds[1];
+        this.mesh.rotation.z += this.rotationSpeeds[2];
       }
 
       this.renderer.render(this.scene, this.camera);

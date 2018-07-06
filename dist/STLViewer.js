@@ -42,20 +42,7 @@ var STLViewer = function (_Component) {
           scene = void 0,
           renderer = void 0,
           mesh = void 0,
-          distance = void 0,
           controls = void 0;
-      var _props = this.props,
-          url = _props.url,
-          width = _props.width,
-          height = _props.height,
-          modelColor = _props.modelColor,
-          backgroundColor = _props.backgroundColor,
-          orbitControls = _props.orbitControls;
-
-      var xDims = void 0,
-          yDims = void 0,
-          zDims = void 0;
-      var component = this;
       var rotate = this.props.rotate;
       var paint = new _Paint2.default(this);
 
@@ -85,24 +72,14 @@ var STLViewer = function (_Component) {
       };
 
       /**
-       * Render the scene after turning off the rotation
-       * @returns {void}
-       */
-      var orbitRender = function orbitRender() {
-        if (rotate) {
-          rotate = false;
-        }
-
-        render();
-      };
-
-      /**
        * Render the scene
        * @returns {void}
        */
       var render = function render() {
         if (mesh && rotate) {
-          mesh.rotation.z += 0.02;
+          mesh.rotation.x += _this2.rotationSpeeds[0];
+          mesh.rotation.y += _this2.rotationSpeeds[1];
+          mesh.rotation.z += _this2.rotationSpeeds[2];
         }
 
         renderer.render(scene, camera);
@@ -111,10 +88,7 @@ var STLViewer = function (_Component) {
   }, {
     key: 'shouldComponentUpdate',
     value: function shouldComponentUpdate(nextProps, nextState) {
-      if (JSON.stringify(nextProps) === JSON.stringify(this.props)) {
-        return false;
-      }
-      return true;
+      return JSON.stringify(nextProps) !== JSON.stringify(this.props);
     }
   }, {
     key: 'componentWillUpdate',
@@ -123,20 +97,10 @@ var STLViewer = function (_Component) {
           scene = void 0,
           renderer = void 0,
           mesh = void 0,
-          distance = void 0,
           controls = void 0;
-      var url = nextProps.url,
-          width = nextProps.width,
-          height = nextProps.height,
-          modelColor = nextProps.modelColor,
-          backgroundColor = nextProps.backgroundColor,
-          orbitControls = nextProps.orbitControls;
+      var rotate = nextProps.rotate,
+          rotationSpeeds = nextProps.rotationSpeeds;
 
-      var xDims = void 0,
-          yDims = void 0,
-          zDims = void 0;
-      var component = this;
-      var rotate = nextProps.rotate;
 
       this.props = nextProps;
       var paint = new _Paint2.default(this);
@@ -167,24 +131,14 @@ var STLViewer = function (_Component) {
       };
 
       /**
-       * Render the scene after turning off the rotation
-       * @returns {void}
-       */
-      var orbitRender = function orbitRender() {
-        if (rotate) {
-          rotate = false;
-        }
-
-        render();
-      };
-
-      /**
        * Render the scene
        * @returns {void}
        */
       var render = function render() {
         if (mesh && rotate) {
-          mesh.rotation.z += 0.02;
+          mesh.rotation.x += rotationSpeeds[0];
+          mesh.rotation.y += rotationSpeeds[1];
+          mesh.rotation.z += rotationSpeeds[2];
         }
 
         renderer.render(scene, camera);
@@ -193,10 +147,10 @@ var STLViewer = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _props2 = this.props,
-          width = _props2.width,
-          height = _props2.height,
-          modelColor = _props2.modelColor;
+      var _props = this.props,
+          width = _props.width,
+          height = _props.height,
+          modelColor = _props.modelColor;
 
 
       return _react2.default.createElement(
@@ -234,7 +188,15 @@ STLViewer.propTypes = {
   backgroundColor: _propTypes2.default.string,
   modelColor: _propTypes2.default.string,
   rotate: _propTypes2.default.bool,
-  orbitControls: _propTypes2.default.bool
+  orbitControls: _propTypes2.default.bool,
+  cameraX: _propTypes2.default.number,
+  cameraY: _propTypes2.default.number,
+  cameraZ: _propTypes2.default.number,
+  lightX: _propTypes2.default.number,
+  lightY: _propTypes2.default.number,
+  lightZ: _propTypes2.default.number,
+  lightColor: _propTypes2.default.string,
+  rotationSpeeds: _propTypes2.default.arrayOf(_propTypes2.default.number)
 };
 STLViewer.defaultProps = {
   backgroundColor: '#EAEAEA',
@@ -242,8 +204,16 @@ STLViewer.defaultProps = {
   height: 400,
   width: 400,
   rotate: true,
-  orbitControls: true
+  orbitControls: true,
+  cameraX: 0,
+  cameraY: 0,
+  cameraZ: null,
+  lightX: 0,
+  lightY: 0,
+  lightZ: 1,
+  lightColor: '#ffffff',
+  rotationSpeeds: [0, 0, 0.02]
 };
-;
+
 
 module.exports = STLViewer;
