@@ -1,5 +1,7 @@
 # React STL Viewer
 
+## New maintainer needed.
+
 A React component for viewing an STL object from a given URL by utilizing Three.js
 
 ## Looking for contributors
