@@ -40,7 +40,6 @@ var Paint = function () {
     key: 'init',
     value: function init(context) {
       this.component = context;
-      this.url = context.props.url;
       this.width = context.props.width;
       this.height = context.props.height;
       this.modelColor = context.props.modelColor;
@@ -53,11 +52,13 @@ var Paint = function () {
       this.rotationSpeeds = context.props.rotationSpeeds;
       this.lights = context.props.lights;
       this.lightColor = context.props.lightColor;
+      this.model = context.props.model;
 
       if (this.mesh !== undefined) {
         this.scene.remove(this.mesh);
         this.mesh.geometry.dispose();
         this.mesh.material.dispose();
+        this.scene.remove(this.grid);
       }
       var directionalLightObj = this.scene.getObjectByName(DIRECTIONAL_LIGHT);
       if (directionalLightObj) {
@@ -98,15 +99,45 @@ var Paint = function () {
       this.scene.add(directionalLight);
     }
   }, {
-    key: 'addSTLToScene',
-    value: function addSTLToScene(reqId) {
+    key: 'loadSTLFromUrl',
+    value: function loadSTLFromUrl(url, reqId) {
       var _this = this;
 
-      this.loader.crossOrigin = '';
-      this.loader.load(this.url, function (geometry) {
-        if (_this.reqNumber !== reqId) {
-          return;
-        }
+      return new Promise(function (resolve) {
+        _this.loader.crossOrigin = '';
+        _this.loader.loadFromUrl(url, function (geometry) {
+          if (_this.reqNumber !== reqId) {
+            return;
+          }
+          resolve(geometry);
+        });
+      });
+    }
+  }, {
+    key: 'loadFromFile',
+    value: function loadFromFile(file) {
+      var _this2 = this;
+
+      return new Promise(function (resolve) {
+        _this2.loader.loadFromFile(file, function (geometry) {
+          resolve(geometry);
+        });
+      });
+    }
+  }, {
+    key: 'addSTLToScene',
+    value: function addSTLToScene(reqId) {
+      var _this3 = this;
+
+      var loadPromise = void 0;
+      if (typeof this.model === 'string') {
+        loadPromise = this.loadSTLFromUrl(this.model, reqId);
+      } else if (this.model instanceof ArrayBuffer) {
+        loadPromise = this.loadFromFile(this.model);
+      } else {
+        return Promise.resolve(null);
+      }
+      return loadPromise.then(function (geometry) {
         // Calculate mesh noramls for MeshLambertMaterial.
         geometry.computeFaceNormals();
         geometry.computeVertexNormals();
@@ -114,30 +145,39 @@ var Paint = function () {
         // Center the object
         geometry.center();
 
-        _this.mesh = new _Three2.default.Mesh(geometry, new _Three2.default.MeshLambertMaterial({
+        var material = new _Three2.default.MeshLambertMaterial({
           overdraw: true,
-          color: _this.modelColor
-        }));
-        // Set the object's dimensions
-        geometry.computeBoundingBox();
-        _this.xDims = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
-        _this.yDims = geometry.boundingBox.max.y - geometry.boundingBox.min.y;
-        _this.zDims = geometry.boundingBox.max.z - geometry.boundingBox.min.z;
+          color: _this3.modelColor
+        });
 
-        if (_this.rotate) {
-          _this.mesh.rotation.x = _this.rotationSpeeds[0];
-          _this.mesh.rotation.y = _this.rotationSpeeds[1];
-          _this.mesh.rotation.z = _this.rotationSpeeds[2];
+        if (geometry.hasColors) {
+          material = new _Three2.default.MeshPhongMaterial({
+            opacity: geometry.alpha,
+            vertexColors: _Three2.default.VertexColors
+          });
         }
 
-        _this.scene.add(_this.mesh);
+        _this3.mesh = new _Three2.default.Mesh(geometry, material);
+        // Set the object's dimensions
+        geometry.computeBoundingBox();
+        _this3.xDims = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
+        _this3.yDims = geometry.boundingBox.max.y - geometry.boundingBox.min.y;
+        _this3.zDims = geometry.boundingBox.max.z - geometry.boundingBox.min.z;
 
-        _this.addCamera();
-        _this.addInteractionControls();
-        _this.addToReactComponent();
+        if (_this3.rotate) {
+          _this3.mesh.rotation.x = _this3.rotationSpeeds[0];
+          _this3.mesh.rotation.y = _this3.rotationSpeeds[1];
+          _this3.mesh.rotation.z = _this3.rotationSpeeds[2];
+        }
+
+        _this3.scene.add(_this3.mesh);
+
+        _this3.addCamera();
+        _this3.addInteractionControls();
+        _this3.addToReactComponent();
 
         // Start the animation
-        _this.animate();
+        _this3.animate();
       });
     }
   }, {
